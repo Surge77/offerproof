@@ -1,0 +1,109 @@
+# Scam signals OfferProof looks for.
+#
+# severity: severe  -> on its own, enough to call the message a likely scam
+#           caution -> worth checking, not damning on its own
+# negatable: when true, a match is ignored if a negation ("never", "no", "do not"...)
+#            appears just before it, so disclaimers like "we never charge a fee" don't fire.
+# patterns: Python regular expressions, matched case-insensitively.
+
+signals:
+  - id: asks_fee
+    severity: severe
+    negatable: true
+    label: Asks you to pay money
+    why: Genuine employers do not charge candidates to apply, train, get verified or join.
+    ask_back: Can you confirm from your official company email that there is no fee or deposit at any stage?
+    patterns:
+      - '\b(registration|training|processing|joining|onboarding|verification|interview|application|documentation|document)\s+(fees?|charges?|amount)\b'
+      - '\b(security|refundable|caution)\s+(deposit|amount|fees?)\b'
+      - '\blaptop\s+(deposit|charges?|amount)\b'
+      - '\b(pay|deposit|transfer|send)\b[^.\n]{0,40}(rs\.?|inr|₹)\s?\d'
+      - '(rs\.?|inr|₹)\s?[\d,]+[^.\n]{0,40}\b(fees?|deposit|charges?)\b'
+
+  - id: task_scam
+    severity: severe
+    negatable: false
+    label: Pays you for online "tasks"
+    why: Paid likes, ratings and reviews are the classic task-based job scam. Small payouts come first, then you are asked to deposit money to unlock bigger tasks.
+    ask_back: What is the registered company name, and where is this role listed on its official careers page?
+    patterns:
+      # "(?!\s+to\b)" keeps "we'd like to schedule a video interview" from matching.
+      - '\b(like|likes|liking|subscribe|subscribing|follow|following)\b(?!\s+to\b)[^.\n]{0,30}\b(youtube|instagram|videos?|channels?|pages?|posts?)\b'
+      - '\b(rate|review|rating|ratings)\b[^.\n]{0,30}\b(hotels?|restaurants?|products?|movies?|apps?)\b'
+      - '\bprepaid\s+tasks?\b'
+      - '\b(wallet|account)\s+(top[\s-]?up|recharge)\b'
+      - '\bcommission\b[^.\n]{0,30}\b(per|each|every)\s+task\b'
+
+  - id: chat_only_interview
+    severity: severe
+    negatable: true
+    label: Interview happens only over chat
+    why: Real companies interview over video, phone or in person. Large employers say outright that they do not interview on messaging apps.
+    ask_back: Can we schedule a video interview with someone from your team?
+    patterns:
+      - '\binterview\b[^.\n]{0,40}\b(on|via|over|through)\s+(telegram|whatsapp|chat|text)\b'
+      - '\b(telegram|whatsapp|chat)\s+(based\s+)?interview\b'
+
+  - id: no_interview
+    severity: severe
+    negatable: false
+    label: Hires you without any interview
+    why: No real employer hires without assessing you. "No interview, direct joining" is a common hook.
+    ask_back: What does the selection process involve, and who will I speak to?
+    patterns:
+      - '\bno\s+interviews?\b'
+      - '\bwithout\s+(any\s+)?interviews?\b'
+      - '\b(direct|instant)\s+(selection|joining|offer)\b'
+
+  - id: asks_secrets
+    severity: severe
+    negatable: true
+    label: Asks for an OTP, PIN or banking login
+    why: Nobody needs your OTP, card details or banking password to hire you. These are only useful for taking money from your account.
+    ask_back: Why would the hiring process need this? (Do not share it.)
+    patterns:
+      - '\botp\b'
+      - '\b(cvv|atm\s+pin|upi\s+pin|card\s+number)\b'
+      - '\b(net\s*banking|bank|banking)\s+(password|login|credentials)\b'
+
+  - id: identity_docs
+    severity: caution
+    negatable: true
+    label: Asks for identity or bank documents
+    why: Real employers collect these during onboarding, after a formal offer. Sending them early to an unverified recruiter risks identity theft.
+    ask_back: Can I share documents after receiving a formal offer through your official HR portal or email?
+    patterns:
+      - '\b(aadhaa?r|pan\s+card|pan\s+number|passport\s+copy)\b'
+      - '\bbank\s+(account\s+)?(details|number|statement|passbook)\b'
+
+  - id: pressure
+    severity: caution
+    negatable: true
+    label: Pushes you to decide fast
+    why: Deadlines measured in hours are meant to stop you from checking.
+    ask_back: Can I have a few days to review the offer?
+    patterns:
+      - '\b(within|in)\s+\d+\s+(hours?|hrs?|minutes?|mins?)\b'
+      - '\b(today only|limited (seats|slots|vacancies)|last date (is )?today|offer expires today)\b'
+      - '\burgent(ly)?\s+(joining|requirement|hiring)\b'
+
+  - id: too_good
+    severity: caution
+    negatable: false
+    label: Pay that is too good for the work
+    why: High daily pay for simple work from home, with no experience needed, is how most job scams open.
+    ask_back: What is the CTC breakup, and which entity issues the salary?
+    patterns:
+      - '(rs\.?|inr|₹)\s?[\d,]+\s*(/|per)\s*(day|hour|task)\b'
+      - '\b(earn|earning|income)\b[^.\n]{0,30}\b(daily|per day|from home)\b'
+      - '\bwork from home\b[^.\n]{0,40}\b(part[\s-]?time|no experience)\b'
+
+  - id: off_platform_contact
+    severity: caution
+    negatable: false
+    label: Moves you to Telegram or WhatsApp
+    why: Scammers move conversations to messaging apps where they are harder to trace.
+    ask_back: Can we continue over your official company email?
+    patterns:
+      - '\b(t\.me|telegram\.me|wa\.me)/'
+      - '\b(contact|message|ping|add|join)\b[^.\n]{0,25}\b(on|via)\s+(telegram|whatsapp)\b'

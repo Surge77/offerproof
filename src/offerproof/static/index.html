@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OfferProof</title>
+<style>
+  :root {
+    --bg: #f6f5f2; --card: #ffffff; --text: #1d1d1b; --muted: #6b6a66; --line: #e2e0da;
+    --scam: #b42318; --scam-bg: #fef3f2; --check: #9a6700; --check-bg: #fff8e1; --accent: #1d4ed8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141413; --card: #1e1e1c; --text: #ecebe7; --muted: #a3a29d; --line: #33332f;
+      --scam: #f97066; --scam-bg: #2a1614; --check: #f5c451; --check-bg: #2a2411; --accent: #7aa2ff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 28px; margin: 0 0 4px; letter-spacing: -0.02em; }
+  .tagline { color: var(--muted); margin: 0 0 24px; }
+  textarea { width: 100%; min-height: 200px; padding: 12px; border: 1px solid var(--line); border-radius: 8px;
+             background: var(--card); color: var(--text); font: inherit; resize: vertical; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 12px 0 24px; flex-wrap: wrap; }
+  label { color: var(--muted); font-size: 14px; display: flex; gap: 8px; align-items: center; }
+  button { background: var(--accent); color: #fff; border: 0; border-radius: 8px; padding: 10px 22px;
+           font: inherit; font-weight: 600; cursor: pointer; }
+  button:disabled { opacity: .6; cursor: wait; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
+  .verdict { border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; }
+  .verdict strong { display: block; font-size: 20px; }
+  .LIKELY_SCAM { background: var(--scam-bg); color: var(--scam); }
+  .UNVERIFIED { background: var(--check-bg); color: var(--check); }
+  .finding { border-top: 1px solid var(--line); padding: 14px 0; }
+  .finding h3 { margin: 0 0 6px; font-size: 16px; }
+  .tag { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; margin-left: 8px; color: var(--muted); }
+  blockquote { margin: 6px 0; padding: 6px 12px; border-left: 3px solid var(--line); color: var(--muted); font-style: italic; }
+  .ask { font-size: 14px; }
+  .section { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 4px; }
+  .section h3 { font-size: 15px; margin: 0 0 6px; }
+  .note { color: var(--muted); font-size: 13px; margin-top: 16px; }
+  .error { color: var(--scam); }
+  footer { color: var(--muted); font-size: 13px; margin-top: 32px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>OfferProof</h1>
+  <p class="tagline">Paste a job offer, recruiter message or email. It is checked on this computer and never uploaded.</p>
+
+  <textarea id="message" placeholder="Paste the full message here, including the sender's email address if there is one."></textarea>
+  <div class="row">
+    <label><input type="checkbox" id="use-model" checked> Also read it with the local AI model</label>
+    <button id="check">Check this offer</button>
+  </div>
+
+  <div id="result"></div>
+
+  <footer>OfferProof never says an offer is genuine. It can only point out signs of a scam. Always verify on the company's official website.</footer>
+</main>
+<script>
+  const MODEL_NOTE = {
+    used: "Checked with pattern rules and the local AI model.",
+    unavailable: "The local AI model isn't running, so this was checked with pattern rules only.",
+    off: "Checked with pattern rules only.",
+  };
+
+  function el(tag, attrs = {}, ...children) {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    for (const child of children) node.append(child);  // strings become text nodes, never HTML
+    return node;
+  }
+
+  function render(r) {
+    const card = el("div", { class: "card" });
+    card.append(el("div", { class: `verdict ${r.verdict}` },
+      el("strong", {}, r.verdict === "LIKELY_SCAM" ? "Likely scam" : "Not verified"), r.summary));
+
+    for (const f of r.findings) {
+      card.append(el("div", { class: "finding" },
+        el("h3", {}, f.label, el("span", { class: "tag" }, f.severity)),
+        el("blockquote", {}, `"${f.quote}"`),
+        el("div", {}, f.why),
+        el("div", { class: "ask" }, el("strong", {}, "Ask them: "), f.ask_back)));
+    }
+
+    if (r.verify.length) {
+      const list = el("ul");
+      for (const v of r.verify) {
+        list.append(el("li", {}, `Genuine ${v.company} recruiters write from `,
+          v.domains.map(d => "@" + d).join(" or "), ". Check the role on their official careers page."));
+      }
+      card.append(el("div", { class: "section" }, el("h3", {}, "How to verify"), list));
+    }
+
+    if (r.findings.length) {
+      const steps = el("ul");
+      for (const s of r.report_steps) steps.append(el("li", {}, s));
+      card.append(el("div", { class: "section" }, el("h3", {}, "What to do now"), steps));
+    }
+
+    card.append(el("div", { class: "note" }, MODEL_NOTE[r.model_status]));
+    return card;
+  }
+
+  const button = document.getElementById("check");
+  const out = document.getElementById("result");
+
+  button.addEventListener("click", async () => {
+    const text = document.getElementById("message").value.trim();
+    if (!text) return;
+    button.disabled = true;
+    button.textContent = "Checking…";
+    out.replaceChildren();
+    try {
+      const res = await fetch("/api/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, use_model: document.getElementById("use-model").checked }),
+      });
+      if (!res.ok) throw new Error(res.status === 422 ? "That message is too long or empty." : "Something went wrong.");
+      out.append(render(await res.json()));
+    } catch (err) {
+      out.append(el("p", { class: "error" }, err.message));
+    } finally {
+      button.disabled = false;
+      button.textContent = "Check this offer";
+    }
+  });
+</script>
+</body>
+</html>

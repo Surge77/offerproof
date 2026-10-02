@@ -1,0 +1,150 @@
+# Labelled messages for measuring OfferProof.
+# label: scam | real
+# source: constructed  -> written to match scam patterns described in public advisories
+#                         (Infosys recruitment fraud alert, I4C warnings on task-based job fraud)
+#         reported     -> a real message someone received, with names and numbers removed
+# Real messages people share privately go in eval/private/ (git-ignored) using the same format.
+
+samples:
+  - id: fee-registration
+    label: scam
+    source: constructed
+    text: |
+      Dear Candidate, Congratulations! You are shortlisted for the post of Junior Analyst at our Bangalore office.
+      To confirm your seat please pay a refundable registration fee of Rs 1,999 to the UPI ID given below.
+
+  - id: task-youtube
+    label: scam
+    source: constructed
+    text: |
+      Hello! Part time job available. Work from home 30 mins daily. Just like YouTube videos and send screenshots.
+      Earn Rs 150 per task. Interested? Reply YES.
+
+  - id: telegram-interview
+    label: scam
+    source: constructed
+    text: |
+      Greetings from Wipro HR team. Your profile is selected for Process Associate. Your interview will be on
+      Telegram, please message our HR @wipro_hr_desk to begin.
+
+  - id: gmail-infosys
+    label: scam
+    source: constructed
+    text: |
+      From: infosys.recruitment.cell@gmail.com
+      Subject: Offer Letter - Infosys Ltd
+      We are pleased to offer you the role of System Engineer at Infosys. Please find your offer letter attached.
+
+  - id: lookalike-tcs
+    label: scam
+    source: constructed
+    text: |
+      From: hr@tcs-careers.in
+      Dear Applicant, Tata Consultancy Services is hiring freshers for 2026. Fill the onboarding form at the link
+      below and keep your documents ready.
+
+  - id: otp-verification
+    label: scam
+    source: constructed
+    text: |
+      Your background verification is pending. Our team will call you now, share the OTP you receive to complete
+      the verification and activate your joining.
+
+  - id: laptop-deposit
+    label: scam
+    source: constructed
+    text: |
+      Congratulations on clearing the interview. The company will provide a laptop. A laptop deposit of Rs 4,500
+      is required before joining and will be refunded with your first salary.
+
+  - id: hotel-rating-topup
+    label: scam
+    source: constructed
+    text: |
+      Earn daily income from home! Rate hotels on our platform and get commission per task. VIP tasks unlock after
+      a small wallet top-up of 1000.
+
+  - id: no-interview-data-entry
+    label: scam
+    source: constructed
+    text: |
+      Urgent hiring for data entry operators. No interview, direct joining. Salary 25,000 per month. Limited seats.
+
+  - id: id-card-kit
+    label: scam
+    source: constructed
+    text: |
+      Hi, you are selected for the warehouse supervisor role. Before joining kindly arrange 2,000 for your ID card
+      and joining kit, our executive will collect it.
+
+  - id: training-material
+    label: scam
+    source: constructed
+    text: |
+      Welcome aboard! HR will add you to the onboarding group. Training material costs 999, transfer it to the
+      account shared in the group and send a screenshot.
+
+  - id: amazon-whatsapp
+    label: scam
+    source: constructed
+    text: |
+      Amazon is hiring part time workers. Earn Rs 3000/day from your phone. No experience needed. Message us on
+      WhatsApp to start today.
+
+  - id: video-interview
+    label: real
+    source: constructed
+    text: |
+      Hi Tejas, thanks for applying for the Backend Engineer role. We'd like to schedule a 45-minute video interview
+      with our engineering manager next week. Please share three time slots that work for you.
+
+  - id: campus-drive
+    label: real
+    source: constructed
+    text: |
+      From: campus.hiring@infosys.com
+      Dear Student, Infosys will conduct an online assessment for the 2026 batch on 14 October. The test link will
+      be shared on your registered email. Infosys does not charge any fee at any stage of recruitment.
+
+  - id: post-offer-documents
+    label: real
+    source: constructed
+    text: |
+      Congratulations on accepting your offer. As part of onboarding, please upload your PAN card and degree
+      certificates on the joining portal before your start date. Reach out to your HR partner with any questions.
+
+  - id: linkedin-recruiter
+    label: real
+    source: constructed
+    text: |
+      Hi! I'm a technical recruiter at a fintech startup in Pune. Your Python projects caught my eye. Would you be
+      open to a quick call this week to talk about a junior developer opening?
+
+  - id: assessment-link
+    label: real
+    source: constructed
+    text: |
+      Thank you for your interest. As the next step, please complete a 60 minute coding assessment on HackerRank
+      within the next 5 days. The link is personalised to your email.
+
+  - id: rejection
+    label: real
+    source: constructed
+    text: |
+      Thank you for taking the time to interview with us. After careful consideration we have decided to move
+      forward with other candidates. We'll keep your profile on file for future openings.
+
+  - id: internship-offer
+    label: real
+    source: constructed
+    text: |
+      From: people@tinystack.io
+      We're happy to offer you a 6 month software engineering internship with a stipend of Rs 25,000 per month.
+      Please review the attached offer letter and sign it by Friday if you'd like to accept.
+
+  - id: no-fee-disclaimer
+    label: real
+    source: constructed
+    text: |
+      This is to inform you that we never ask candidates for a registration fee or security deposit. If anyone
+      asks you to pay on our behalf, please report it to our recruitment team.

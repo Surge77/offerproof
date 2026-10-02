@@ -1,0 +1,66 @@
+# Employers frequently impersonated in fake offers sent to Indian job seekers.
+# `domains` are the only email domains that company recruits from; subdomains of these are accepted.
+# `aliases` are names a scam message might use for the company (matched as whole words).
+
+companies:
+  - name: Tata Consultancy Services
+    aliases: [tcs, tata consultancy]
+    domains: [tcs.com]
+  - name: Infosys
+    aliases: [infosys]
+    domains: [infosys.com]
+  - name: Wipro
+    aliases: [wipro]
+    domains: [wipro.com]
+  - name: HCLTech
+    aliases: [hcl, hcltech, hcl technologies]
+    domains: [hcltech.com, hcl.com]
+  - name: Tech Mahindra
+    aliases: [tech mahindra, techmahindra]
+    domains: [techmahindra.com]
+  - name: Accenture
+    aliases: [accenture]
+    domains: [accenture.com]
+  - name: Cognizant
+    aliases: [cognizant, cts]
+    domains: [cognizant.com]
+  - name: Capgemini
+    aliases: [capgemini]
+    domains: [capgemini.com]
+  - name: IBM
+    aliases: [ibm]
+    domains: [ibm.com]
+  - name: Deloitte
+    aliases: [deloitte]
+    domains: [deloitte.com]
+  - name: LTIMindtree
+    aliases: [ltimindtree, lti mindtree, mindtree]
+    domains: [ltimindtree.com]
+  - name: Amazon
+    aliases: [amazon]
+    domains: [amazon.com, amazon.in]
+  - name: Flipkart
+    aliases: [flipkart]
+    domains: [flipkart.com]
+  - name: Google
+    aliases: [google]
+    domains: [google.com]
+  - name: Microsoft
+    aliases: [microsoft]
+    domains: [microsoft.com]
+
+# Public email providers. A recruiter writing from one of these while claiming to be a company above
+# is a strong scam signal.
+free_mail:
+  - gmail.com
+  - googlemail.com
+  - yahoo.com
+  - yahoo.in
+  - outlook.com
+  - hotmail.com
+  - live.com
+  - rediffmail.com
+  - icloud.com
+  - proton.me
+  - protonmail.com
+  - zoho.in

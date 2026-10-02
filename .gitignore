@@ -1,0 +1,25 @@
+# Local working notes
+PLAN.md
+notes/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Secrets and private samples
+.env
+.env.*
+eval/private/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
