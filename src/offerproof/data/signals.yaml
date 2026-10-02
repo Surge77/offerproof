@@ -5,12 +5,16 @@
 # negatable: when true, a match is ignored if a negation ("never", "no", "do not"...)
 #            appears just before it, so disclaimers like "we never charge a fee" don't fire.
 # patterns: Python regular expressions, matched case-insensitively.
+# evidence: a regular expression the model's quote must match before its claim counts. It stops the
+#           model from pinning a signal on an unrelated sentence, such as calling a HackerRank
+#           assessment a "task scam".
 
 signals:
   - id: asks_fee
     severity: severe
     negatable: true
     label: Asks you to pay money
+    evidence: '\d|rs\b|₹|inr|fee|deposit|pay|charge|amount|cost|money|advance'
     why: Genuine employers do not charge candidates to apply, train, get verified or join.
     ask_back: Can you confirm from your official company email that there is no fee or deposit at any stage?
     patterns:
@@ -24,6 +28,7 @@ signals:
     severity: severe
     negatable: false
     label: Pays you for online "tasks"
+    evidence: '\b(like|likes|liking|subscribe|follow|rate|rating|review|tasks?|top[\s-]?up|recharge|commission|screenshot)'
     why: Paid likes, ratings and reviews are the classic task-based job scam. Small payouts come first, then you are asked to deposit money to unlock bigger tasks.
     ask_back: What is the registered company name, and where is this role listed on its official careers page?
     patterns:
@@ -38,6 +43,7 @@ signals:
     severity: severe
     negatable: true
     label: Interview happens only over chat
+    evidence: '\b(telegram|whatsapp|chat|text|messag)'
     why: Real companies interview over video, phone or in person. Large employers say outright that they do not interview on messaging apps.
     ask_back: Can we schedule a video interview with someone from your team?
     patterns:
@@ -48,6 +54,7 @@ signals:
     severity: severe
     negatable: false
     label: Hires you without any interview
+    evidence: '\bno\s+interview|\bwithout\b|\b(direct|instant|immediate)\b'
     why: No real employer hires without assessing you. "No interview, direct joining" is a common hook.
     ask_back: What does the selection process involve, and who will I speak to?
     patterns:
@@ -59,6 +66,7 @@ signals:
     severity: severe
     negatable: true
     label: Asks for an OTP, PIN or banking login
+    evidence: '\b(otp|pin|cvv|card|password|login|credentials)\b'
     why: Nobody needs your OTP, card details or banking password to hire you. These are only useful for taking money from your account.
     ask_back: Why would the hiring process need this? (Do not share it.)
     patterns:
@@ -70,6 +78,7 @@ signals:
     severity: caution
     negatable: true
     label: Asks for identity or bank documents
+    evidence: '\b(aadhaa?r|pan|passport|bank|account|documents?)\b'
     why: Real employers collect these during onboarding, after a formal offer. Sending them early to an unverified recruiter risks identity theft.
     ask_back: Can I share documents after receiving a formal offer through your official HR portal or email?
     patterns:
@@ -80,6 +89,7 @@ signals:
     severity: caution
     negatable: true
     label: Pushes you to decide fast
+    evidence: '\b(hours?|hrs?|minutes?|mins?|today|now|immediately|urgent\w*|limited|seats?|slots?|deadline|expires?)\b'
     why: Deadlines measured in hours are meant to stop you from checking.
     ask_back: Can I have a few days to review the offer?
     patterns:

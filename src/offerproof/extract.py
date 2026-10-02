@@ -63,8 +63,12 @@ the message (a short phrase is enough). If something is not in the message, set 
 - asks_secrets: asks for an OTP, PIN, CVV, card number or banking password.
 - asks_identity_docs: asks for Aadhaar, PAN, passport or bank account details.
 - task_based_work: the job is paid online tasks such as liking videos, rating hotels or reviewing products.
+  Coding tests, assessments and assignments are NOT task-based work.
 - pressure: demands a decision or payment within hours, "today only", limited seats.
-- interview.channel: how the interview happens. "chat_only" means only by Telegram/WhatsApp/text chat.
+- interview.channel: how the interview happens. Phone or video calls are "video_or_phone".
+  "chat_only" only when the message says the interview is held over Telegram/WhatsApp/text chat.
+  "no_interview" only when the message says there is no interview. If the message does not describe
+  how an interview will be held (for example a rejection or a general enquiry), use "not_mentioned".
 - claimed_company: the employer the message claims to represent, or "" if none."""
 
 EXAMPLE_MESSAGE = (
@@ -102,6 +106,16 @@ def quote_is_genuine(quote: str, message: str) -> bool:
     return len(cleaned) >= MIN_QUOTE_CHARS and cleaned in _normalise(message)
 
 
+def quote_supports(signal_id: str, quote: str) -> bool:
+    """The quote must be about the claim, not just appear somewhere in the message."""
+    evidence = load_signals()[signal_id].evidence
+    return evidence is None or evidence.search(quote) is not None
+
+
+def _accepted(signal_id: str, quote: str, message: str) -> bool:
+    return quote_is_genuine(quote, message) and quote_supports(signal_id, quote)
+
+
 def _finding(signal_id: str, quote: str) -> Finding:
     signal = load_signals()[signal_id]
     return Finding(
@@ -115,12 +129,12 @@ def findings_from_answer(answer: dict[str, Any], message: str) -> Extraction:
     for field, signal_id in FLAG_FIELDS.items():
         evidence = answer.get(field) or {}
         quote = str(evidence.get("quote", ""))
-        if evidence.get("present") is True and quote_is_genuine(quote, message):
+        if evidence.get("present") is True and _accepted(signal_id, quote, message):
             findings.append(_finding(signal_id, quote))
     interview = answer.get("interview") or {}
     signal_id = INTERVIEW_SIGNALS.get(str(interview.get("channel", "")))
     quote = str(interview.get("quote", ""))
-    if signal_id and quote_is_genuine(quote, message):
+    if signal_id and _accepted(signal_id, quote, message):
         findings.append(_finding(signal_id, quote))
     company = str(answer.get("claimed_company", "")).strip()
     return Extraction(findings=findings, claimed_company=company if company and re.search(

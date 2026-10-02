@@ -20,6 +20,7 @@ class Signal:
     why: str
     ask_back: str
     patterns: tuple[re.Pattern[str], ...]
+    evidence: re.Pattern[str] | None
 
 
 @dataclass(frozen=True)
@@ -56,6 +57,7 @@ def load_signals() -> dict[str, Signal]:
             why=item["why"],
             ask_back=item["ask_back"],
             patterns=tuple(re.compile(p, re.IGNORECASE) for p in item["patterns"]),
+            evidence=re.compile(item["evidence"], re.IGNORECASE) if item.get("evidence") else None,
         )
     return signals
 
