@@ -50,6 +50,20 @@ def test_evidence_with_a_made_up_quote_is_dropped() -> None:
     assert "asks_secrets" not in signals
 
 
+@pytest.mark.parametrize(("message", "model_answer"), [
+    ("Would you be open to a quick call this week?",
+     {"interview": {"channel": "chat_only", "quote": "quick call this week"}}),
+    ("Thank you for taking the time to interview with us.",
+     {"interview": {"channel": "chat_only", "quote": "interview with us"}}),
+    ("Please complete a 60 minute coding assessment on HackerRank.",
+     {"task_based_work": {"present": True, "quote": "complete a 60 minute coding assessment on HackerRank"}}),
+])
+def test_quote_that_does_not_support_the_claim_is_dropped(message: str, model_answer: dict[str, Any]) -> None:
+    claim = answer(asks_money={"present": False, "quote": ""}, interview={"channel": "not_mentioned", "quote": ""})
+    claim.update(model_answer)
+    assert findings_from_answer(claim, message).findings == []
+
+
 def test_company_not_in_message_is_ignored() -> None:
     assert findings_from_answer(answer(claimed_company="Google"), MESSAGE).claimed_company == ""
 
