@@ -7,6 +7,8 @@ Fake job offers mostly target people with little or no work experience. Most of 
 a fee to "confirm your seat", an interview held over Telegram, a Gmail address claiming to be a large
 company. OfferProof looks for those tells and shows you the exact words that triggered each one.
 
+![OfferProof flagging a fake Infosys offer with the quoted reasons](media/demo-scam.gif)
+
 ```
 $ offerproof check offer.txt
 
